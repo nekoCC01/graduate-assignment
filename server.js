@@ -51,39 +51,43 @@ db.once('open', function() {
     if (err) {
       console.log(err);
     }
-
-    var movie1 = new Movie({
-      title: 'The Shining',
-      year: 1980,
-      director: director._id
-    });
-
-    movie1.save(function(err) {
-      if (err) {
-        console.log(err);
-      }
-    });
-
-    var movie2 = new Movie({
-      title: 'A Clockwork Orange',
-      year: 1980,
-      director: director._id
-    });
-
-    movie2.save(function(err) {
-      if (err) {
-        console.log(err);
-      }
-    });
-
   });
+
+  var movie1 = new Movie({
+    title: 'The Shining',
+    year: 1980,
+    director: director._id
+  });
+
+  movie1.save(function(err) {
+    if (err) {
+      console.log(err);
+    }
+  });
+
+  director.movies.push(movie1);
+
+  var movie2 = new Movie({
+    title: 'A Clockwork Orange',
+    year: 1980,
+    director: director._id
+  });
+
+  movie2.save(function(err) {
+    if (err) {
+      console.log(err);
+    }
+  });
+
+  director.movies.push(movie2);
+
+  director.save();
 
   /*
    -------------------------------------------
    Populating our movie´s director
    -------------------------------------------
    */
-
 
   Movie.
       findOne({title: 'The Shining'}).
@@ -95,6 +99,16 @@ db.once('open', function() {
         console.log('The director is %s', movie.director.name);
         // prints "The author is Ian Fleming"
       });
+
+  Director.
+      findOne({name: 'Stanley Kubrick'}).
+      populate('movies').// only works if we pushed refs to children
+  exec(function(err, person) {
+    if (err) {
+      return handleError(err);
+    }
+    console.log(person);
+  });
 
   /*
   -------------------------------------------
