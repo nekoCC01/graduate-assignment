@@ -1,0 +1,23 @@
+{
+  "name": "graduate-assignment",
+  "version": "1.0.0",
+  "description": "HES CSCI E31 - Graduate Assignment Code",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nekoCC01/graduate-assignment.git"
+  },
+  "author": "Daniel Kasai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nekoCC01/graduate-assignment/issues"
+  },
+  "homepage": "https://github.com/nekoCC01/graduate-assignment#readme",
+  "dependencies": {
+    "mongoose": "^5.0.14"
+  }
+}
