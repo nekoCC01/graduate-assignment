@@ -4,3 +4,6 @@ block content
   h1= title
   p Welcome to #{title}
 
+  each movie in movies
+    p #{movie.title}
+    p #{movie.director.name}

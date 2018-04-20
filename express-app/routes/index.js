@@ -7,17 +7,15 @@ var Movie = require('../models/movieModel');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   Movie.
-      findOne({title: 'The Shining'}).
+      find({}).
       populate('director').
-      exec(function(err, movie) {
+      exec(function(err, movies) {
         if (err) {
           console.log(err);
         }
-        console.log('The director is %s', movie.director.name);
-        // prints "The author is Ian Fleming"
+        console.log(movies);
+        res.render('index', {movies: movies});
       });
-
-  res.render('index', { title: 'Express' });
 });
 
 module.exports = router;
