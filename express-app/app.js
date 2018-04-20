@@ -4,11 +4,22 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+require('dotenv').config();
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+//connect to DB
+var uri = 'mongodb://' + process.env.DB_USER + ':'
+    + process.env.DB_PASS
+    + '@hes-mean-shard-00-00-cywuc.mongodb.net:27017,hes-mean-shard-00-01-cywuc.mongodb.net:27017,hes-mean-shard-00-02-cywuc.mongodb.net:27017/graduate-assignment?ssl=true&replicaSet=HES-mean-shard-0&authSource=admin';
+mongoose.connect(uri);
+var db = mongoose.connection;
+db.on('error', (err) => {console.error(`connection error: ${err}`);});
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,7 +34,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
