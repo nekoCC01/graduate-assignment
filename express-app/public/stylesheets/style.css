@@ -13,3 +13,6 @@
 .card-body p {
     font-size: smaller;
 }
+.jumbotron a {
+    color: cadetblue;
+}
