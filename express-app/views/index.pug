@@ -76,8 +76,8 @@ block content
           }
         p.
           So far everything works fine. But let´s now imagine that we have <b>multiple movies from the same director</b>.
-          We then would have to repeat the same nested entry for every movie, which would easily lead to mistakes.
-          Furthermore any addition to the director´s information would have to be inserted in every sub-document.
+          We then would have to repeat the same nested entry for every movie, which easily leads to mistakes.
+          Furthermore any addition to the director´s information has to be inserted in every sub-document.
         p.
           In such a case, it would be wise to start a <b>new collection with directors</b> and add references to the movies collection:
 
@@ -123,7 +123,7 @@ block content
         h3.cyan Population in action
         p.
           Let´s have a look at the above implementation in action: instead of logging the movies to the console,
-          we apply the movie data to this page (which is a view of an express app):
+          we apply the movie data to this page (which is the view of an express app):
 
         pre.bg-dark.text-white.p-5.
           var express = require('express');
