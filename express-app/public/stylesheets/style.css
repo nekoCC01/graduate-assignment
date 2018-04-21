@@ -1,1 +1,15 @@
-
+.bg-darkslate {
+    background-color: darkslategrey;
+}
+.bg-cyan {
+    background-color: darkcyan;
+}
+.cyan {
+    color: darkcyan;
+}
+.darkslate {
+    color: darkslategrey;
+}
+.card-body p {
+    font-size: smaller;
+}

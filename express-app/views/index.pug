@@ -3,30 +3,154 @@ extends layout
 block content
 
   div.container
-    header.blog-header.mb-3.mt-2
+    header.blog-header.mb-3.mt-2.darkslate
       div.row.flex-nowrap.justify-content-between.align-items-center
         div.col-4.pt-1 CSCI E31
         div.col-4.text-center.font-weight-bold Graduate Assignment
         div.col-4.d-flex.justify-content-end Daniel Kasai
-    div.jumbotron.text-white.bg-dark.rounded
+    div.jumbotron.text-white.rounded.bg-darkslate
       div.col-md-8
         h1 Mongoose Populate Feature
         p.lead.my-3 As an addition to week 8, I want to introduce the Mongoose feature of populating a collection with entries from another collection.
 
     div.row
       div.col
-        h3 What is the populate feature?
+        h3.cyan What is the populate feature?
         p.
           What mongoose describes as population, is essentially the replacement of a reference within one collection through the corresponding entries of a second collection.
           These entries have to be referenced by their Object ID.
         hr
-        h3 Use case
-        p Before diving into the implementation, let´s imagine a case where we could want to use this feature.
+        h3.cyan Use case
+        p.mb-3.
+          Before diving into the implementation, let´s imagine a case where we would want to use this feature: <br>
+          suppose we have a collection of movies.
+        pre.bg-cyan.text-white.p-5.
+          {
+             title: "The Shining",
+             year: 1980,
+             director: "Stanley Kubrick"
+          },
+          {
+            title: "Minority Report",
+            year: 2002,
+            director: "Steven Spielberg"
+          },
+          {
+            title: "American Beauty",
+            year: 1999,
+            director: "Sam Mendes"
+          }
 
+        p.
+          Now if we want to add additional information about the director, the next simple step could be a nested document:
+        pre.bg-cyan.text-white.p-5.
+          {
+            title: "The Shining",
+            year: 1980,
+            director: {
+              name: "Stanley Kubrick",
+              lifespan: "1928-1999",
+              biography: "Stanley Kubrick was an American film director, screenwriter, and producer.
+              He is frequently cited as one of the greatest and most influential directors in cinematic history..."
+            }
+          },
+          {
+            title: "Minority Report",
+            year: 2002,
+            director: {
+              name: "Steven Spielberg",
+              lifespan: "1946-",
+              biography: "Steven Allan Spielberg is an American filmmaker.
+              He is considered one of the founding pioneers of the New Hollywood era..."
+            }
+          },
+          {
+            title: "American Beauty",
+            year: 1999,
+            director: {
+              name: "Sam Mendes",
+              lifespan: "1965-",
+              biography: "Samuel Alexander Mendes is an English stage and film director.
+              He is best known for directing the drama film American Beauty (1999)..."
+            }
+          }
+        p.
+          So far everything works fine. But let´s now imagine that we have <b>multiple movies from the same director</b>.
+          We then would have to repeat the same nested entry for every movie, which would easily lead to mistakes.
+          Furthermore any addition to the director´s information would have to be inserted in every sub-document.
+        p.
+          In such a case, it would be wise to start a <b>new collection with directors</b> and add references to the movies collection:
 
+        img.img-fluid.mb-3(src="images/connected_collections.png")
 
-    div.row
-      div.col
+        p.
+          Now, with such a structure in place, mongoose will very easily allow to pull the corresponding directors-data into the movies collection. <br>
+          For this, the populate-method can be used.
+        hr
+        h3.cyan Implementation
+        p But before we can use the population, we have to prepare the database Schemas accordingly:
+
+        pre.bg-dark.text-white.p-5.
+          var directorSchema = mongoose.Schema({
+            _id: Schema.Types.ObjectId,
+            name: String,
+            lifespan: String,
+            biography: String
+          });
+          var Director = mongoose.model('Director', directorSchema);
+
+          var movieSchema = mongoose.Schema({
+            title: String,
+            year: Number,
+            director: {type: Schema.Types.ObjectId, ref: 'Director'}
+          });
+          var Movie = mongoose.model('Movie', movieSchema);
+
+        p See, how the director within the movie Schema is referenced by its ObjecID and connected to the "Director"-model.
+        p.
+          The following code will then connect the two collections by pulling in the directors data, or in other words:
+          <b>populate</b> the movies collections´ reference with directors information.
+        pre.bg-dark.text-white.p-5.
+          Movie.find({}).populate('director').
+              exec(function(err, movies) {
+                  if (err) {
+                    console.log(err);
+                  }
+                  console.log(movies);
+              }
+          );
+        hr
+        h3.cyan Population in action
+        p.
+          Let´s have a look at the above implementation in action: instead of logging the movies to the console,
+          we apply the movie data to this page (which is a view of an express app):
+
+        pre.bg-dark.text-white.p-5.
+          var express = require('express');
+          var router = express.Router();
+
+          var Director = require('../models/directorModel');
+          var Movie = require('../models/movieModel');
+
+          router.get('/', function(req, res, next) {
+            Movie.find({}).populate('director').
+                exec(function(err, movies) {
+                    if (err) {
+                      console.log(err);
+                    }
+                    res.render('index', {movies: movies});
+                }
+            );
+          });
+
+          module.exports = router;
+
+        p With this populated data available, we now can display the movies together with all information about the director:
         each movie in movies
-          p #{movie.title}
-          p #{movie.director.name}
+          div.card.mb-3.border-dark
+            div.card-header
+              h5.card-title #{movie.title} (#{movie.year})
+            div.card-body.text-dark
+              h6.card-title Director: #{movie.director.name} (#{movie.director.lifespan})
+              p #{movie.director.biography}
+
